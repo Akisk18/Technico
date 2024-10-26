@@ -14,5 +14,8 @@ public class PropertyItem
     public string PropertyAdrress { get; set; } = string.Empty;
     public int ConstructionYear { get; set; }
     public PropertyType PropertyType { get; set; }
+    public PropertyOwner? Owner { get; set; }
+    public List<PropertyRepair> Repairs { get; set; } = [];
+    public List<PropertyOwner> Owners { get; set; } = [];
 
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,7 @@ public class PropertyRepair
     public string RepairDescription { get; set; } = string.Empty;
     public string RepairAddress { get; set; } = string.Empty;
     public RepairStatus RepairStatus { get; set; } = RepairStatus.Pending;
+    [Precision(8, 2)]
     public decimal RepairPrice { get; set; }
-    public PropertyOwner? PropertyOwner { get; set; }
+    public PropertyItem? Property {  get; set; }
 }
