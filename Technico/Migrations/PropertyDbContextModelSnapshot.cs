@@ -33,12 +33,16 @@ namespace Technico.Migrations
                     b.Property<int>("ConstructionYear")
                         .HasColumnType("int");
 
-                    b.Property<int?>("OwnerId")
-                        .HasColumnType("int");
+                    b.Property<string>("OwnerVAT")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PropertyAdrress")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PropertyOwnerId")
+                        .HasColumnType("int");
 
                     b.Property<int>("PropertyType")
                         .HasColumnType("int");
@@ -49,7 +53,7 @@ namespace Technico.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId");
+                    b.HasIndex("PropertyOwnerId");
 
                     b.ToTable("PropertyItems");
                 });
@@ -106,7 +110,7 @@ namespace Technico.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("PropertyId")
+                    b.Property<int>("PropertyItemId")
                         .HasColumnType("int");
 
                     b.Property<string>("RepairAddress")
@@ -132,7 +136,7 @@ namespace Technico.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PropertyId");
+                    b.HasIndex("PropertyItemId");
 
                     b.ToTable("PropertyRepairs");
                 });
@@ -141,7 +145,9 @@ namespace Technico.Migrations
                 {
                     b.HasOne("Technico.Models.PropertyOwner", "Owner")
                         .WithMany("Properties")
-                        .HasForeignKey("OwnerId");
+                        .HasForeignKey("PropertyOwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Owner");
                 });
@@ -150,7 +156,9 @@ namespace Technico.Migrations
                 {
                     b.HasOne("Technico.Models.PropertyItem", "Property")
                         .WithMany("Repairs")
-                        .HasForeignKey("PropertyId");
+                        .HasForeignKey("PropertyItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Property");
                 });

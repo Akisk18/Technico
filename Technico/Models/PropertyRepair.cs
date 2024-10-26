@@ -15,6 +15,7 @@ public class PropertyRepair
     public RepairType RepairType { get; set; }
     public string RepairDescription { get; set; } = string.Empty;
     public string RepairAddress { get; set; } = string.Empty;
+    public int PropertyItemId { get; set; }
     public RepairStatus RepairStatus { get; set; } = RepairStatus.Pending;
     [Precision(8, 2)]
     public decimal RepairPrice { get; set; }
