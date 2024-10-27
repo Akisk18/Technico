@@ -12,7 +12,7 @@ using Technico.Repositories;
 namespace Technico.Migrations
 {
     [DbContext(typeof(PropertyDbContext))]
-    [Migration("20241026203605_M1")]
+    [Migration("20241027175744_M1")]
     partial class M1
     {
         /// <inheritdoc />
@@ -40,7 +40,7 @@ namespace Technico.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PropertyAdrress")
+                    b.Property<string>("PropertyAddress")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

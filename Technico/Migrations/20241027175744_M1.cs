@@ -38,7 +38,7 @@ namespace Technico.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PublicIdentificationNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PropertyAdrress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PropertyAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ConstructionYear = table.Column<int>(type: "int", nullable: false),
                     PropertyType = table.Column<int>(type: "int", nullable: false),
                     OwnerVAT = table.Column<string>(type: "nvarchar(max)", nullable: false),

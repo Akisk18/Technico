@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Technico.Enums;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Technico.Models;
 
@@ -15,9 +16,15 @@ public class PropertyRepair
     public RepairType RepairType { get; set; }
     public string RepairDescription { get; set; } = string.Empty;
     public string RepairAddress { get; set; } = string.Empty;
+    //Foreign Key
     public int PropertyItemId { get; set; }
     public RepairStatus RepairStatus { get; set; } = RepairStatus.Pending;
     [Precision(8, 2)]
     public decimal RepairPrice { get; set; }
     public PropertyItem? Property {  get; set; }
+
+    public override string ToString()
+    {
+        return $"Repair ID: {Id}, Description: {RepairDescription}, Date: {ScheduledRepair}, Cost: {RepairPrice}";
+    }
 }

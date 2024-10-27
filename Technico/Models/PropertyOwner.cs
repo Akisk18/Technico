@@ -20,4 +20,8 @@ public class PropertyOwner
     public UserType UserType { get; set; }
     public List<PropertyItem> Properties { get; set; } = [];
 
+    public override string ToString()
+    {
+        return $"ID: {Id}, Name: {Name} Surname: {Surname}, VAT: {VAT}, Address: {Address}, Email: {Email}";
+    }
 }

@@ -37,7 +37,7 @@ namespace Technico.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PropertyAdrress")
+                    b.Property<string>("PropertyAddress")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

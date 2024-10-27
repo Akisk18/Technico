@@ -17,6 +17,22 @@ public class PropertyOwnerService
     {
         this.db = db;
     }
+
+    //Register an owner
+    public PropertyOwner Register(PropertyOwner propertyOwner)
+    {
+        var existingUser = db.PropertyOwners.FirstOrDefault(x => x.Email == propertyOwner.Email || x.VAT == propertyOwner.VAT);
+        if (existingUser != null)
+        {
+            Console.WriteLine("User already exists.");
+            return existingUser;
+        }
+            db.PropertyOwners.Add(propertyOwner);
+            db.SaveChanges();
+            Console.WriteLine("User registered succesfully!");
+            return propertyOwner;
+        
+    }
     //Display all details
     public void DisplayDetails(int id)
     {
@@ -29,17 +45,18 @@ public class PropertyOwnerService
             Console.WriteLine("Owner not Found");
             return;
         }
-        Console.WriteLine(propertyOwner.ToString());
-        if (propertyOwner.Properties.Count > 0)
+        Console.WriteLine($"Owner Details : {propertyOwner}");
+        if (propertyOwner.Properties != null) 
         {
+            Console.WriteLine("\nProperties: ");
             foreach (var properties in propertyOwner.Properties)
             {
-                Console.WriteLine($"{properties}");
-                if (properties.Repairs.Count > 0)
+                Console.WriteLine(properties);
+                if (properties.Repairs != null)
                 {
                     foreach (var repairs in properties.Repairs)
                     {
-                        Console.WriteLine($"{repairs}");
+                        Console.WriteLine(repairs);
                     }
                 }
             }
@@ -48,10 +65,10 @@ public class PropertyOwnerService
     }
 
     //Update Owner Details
-    public PropertyOwner UpdatePropertyOwner(PropertyOwner propertyOwner)
+    public PropertyOwner? UpdatePropertyOwner(PropertyOwner propertyOwner)
     {
         PropertyOwner? propertyOwnerdb = db.PropertyOwners.FirstOrDefault(p => p.Id == propertyOwner.Id);
-        if (propertyOwnerdb == null)
+        if (propertyOwnerdb != null)
         {
             propertyOwnerdb.Name = propertyOwner.Name;
             propertyOwnerdb.Surname = propertyOwner.Surname;
@@ -61,8 +78,15 @@ public class PropertyOwnerService
             propertyOwnerdb.PhoneNumber = propertyOwner.PhoneNumber;
             propertyOwnerdb.Password = propertyOwner.Password;
             propertyOwnerdb.UserType = propertyOwner.UserType;
+            db.SaveChanges();
+            Console.WriteLine("Owner Details updated succesfully!");
+            return propertyOwnerdb;
+
         }
-        return propertyOwnerdb;
+        
+        Console.WriteLine("No owner found.");
+        return null;
+
     }
     //Delete Owner
     public bool DeletePropertyOwner(int id)
@@ -72,8 +96,10 @@ public class PropertyOwnerService
         {
             db.PropertyOwners.Remove(propertyOwnerdb);
             db.SaveChanges();
+            Console.WriteLine("Owner deleted succesfully!");
             return true;
         }
+        Console.WriteLine("Owner could not be found");
         return false;
     }
 }

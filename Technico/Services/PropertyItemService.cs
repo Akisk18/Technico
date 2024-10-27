@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,30 +21,54 @@ public class PropertyItemService
     //Displays all details of the property
     public PropertyItem? ViewPropertyItem(int id)
     {
-        return db.PropertyItems.Where(p => p.Id == id).FirstOrDefault();
+       var propertyItem = db.PropertyItems.Where(p => p.Id == id)
+            .Include(p => p.Repairs)
+            .FirstOrDefault();
+
+        if (propertyItem == null)
+        {
+            Console.WriteLine("Property not found.");
+            return null;
+        }
+            Console.WriteLine(propertyItem);
+        if (propertyItem != null)
+        {
+            foreach (var repairs in propertyItem.Repairs)
+            {
+                Console.WriteLine(repairs);
+            }
+        }
+        return propertyItem;
     }
     //Creates a new propertyItem
-    public PropertyItem CreatePropertyItem(PropertyItem propertyItem)
+    public PropertyItem CreatePropertyItem(PropertyItem propertyItem , int ownerId)
     {
+        var owner = db.PropertyOwners.FirstOrDefault(p => p.Id == ownerId);
+        propertyItem.Owner = owner;
+        propertyItem.PropertyOwnerId = ownerId;
         db.PropertyItems.Add(propertyItem);
         db.SaveChanges();
+        Console.Write("Property Created Succesfully!");
         return propertyItem;
     }
     //Update a propertyItem
-    public PropertyItem UpdatePropertyItem(PropertyItem propertyItem) 
+    public PropertyItem? UpdatePropertyItem(PropertyItem propertyItem) 
     {
         PropertyItem? propertyItemdb = db.PropertyItems.FirstOrDefault(p => p.Id == propertyItem.Id);
         if (propertyItemdb != null)
         {
             propertyItemdb.PublicIdentificationNumber = propertyItem.PublicIdentificationNumber;
-            propertyItemdb.PropertyAdrress = propertyItem.PropertyAdrress;
+            propertyItemdb.PropertyAddress = propertyItem.PropertyAddress;
             propertyItemdb.PropertyType = propertyItem.PropertyType;
             propertyItemdb.ConstructionYear = propertyItem.ConstructionYear;
             propertyItemdb.OwnerVAT = propertyItem.OwnerVAT;
             propertyItemdb.Owner = propertyItem.Owner;
             db.SaveChanges();
+            Console.WriteLine("Property Updated!");
+            return propertyItemdb;
         }
-        return propertyItemdb;
+        Console.WriteLine("The property could not be found.");
+        return null;
     }
     //Delete a propertyItem
     public bool DeletePropertyItem(int id)
@@ -53,8 +78,10 @@ public class PropertyItemService
         {
             db.PropertyItems.Remove(propertyItemdb);
             db.SaveChanges();
+            Console.WriteLine("Property Deleted Succesfully!");
             return true;
         }
+        Console.WriteLine("Property Could not be found.");
        return false;
     }
 
