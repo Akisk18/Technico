@@ -17,6 +17,22 @@ public class PropertyRepairService
         this.db = db;
     }
 
+    public bool ValidateRepair(PropertyRepair propertyRepair)
+    {
+        bool isValid = true;
+        if (propertyRepair.RepairAddress == null)
+        {
+            isValid = false;
+            Console.WriteLine("Please enter a repair address.");
+        }
+        if(propertyRepair.RepairDescription == null) 
+        {
+            isValid = false;
+            Console.WriteLine("Please enter a repair description");
+        }
+
+        return isValid;
+    }
     //Search repair details
     public List<PropertyRepair> SearchPropertyRepair (DateTime searchDate)
     {
@@ -42,6 +58,12 @@ public class PropertyRepairService
         propertyRepair.PropertyItemId = itemId;
         propertyRepair.Property = item;
 
+        if (item == null)
+        {
+            Console.WriteLine("Property not found. Creation of repair detail failed.");
+            return propertyRepair;
+        }
+
         try
         {
             db.PropertyRepairs.Add(propertyRepair);
@@ -50,17 +72,20 @@ public class PropertyRepairService
         }
         catch (Exception) 
         {
-            Console.WriteLine("An error occured.");
+            Console.WriteLine("An error occured saving in the database.");
         }
         
         return propertyRepair;
     }
     //Update the Repair Details
-    public PropertyRepair? UpdatePropertyRepair(PropertyRepair propertyRepair)
+    public PropertyRepair? UpdatePropertyRepair(PropertyRepair propertyRepair, int id)
     {
-        PropertyRepair? propertyRepairdb = db.PropertyRepairs.FirstOrDefault(p => p.Id == propertyRepair.Id);
-        if (propertyRepairdb != null)
+        PropertyRepair? propertyRepairdb = db.PropertyRepairs.FirstOrDefault(p => p.Id == id);
+        if (propertyRepairdb == null)
         {
+            Console.WriteLine("Repair details could not be found. Update failed.");
+            return null;
+        }
             propertyRepairdb.ScheduledRepair = propertyRepair.ScheduledRepair;
             propertyRepairdb.RepairType = propertyRepair.RepairType;
             propertyRepairdb.RepairDescription = propertyRepair.RepairDescription;
@@ -79,16 +104,16 @@ public class PropertyRepairService
             }
             
             return propertyRepairdb;
-        }
-        Console.WriteLine("Repair details could not found.");
-        return null;
     }
     //Delete a propertyRepair
     public bool DeletePropertyRepair(int id)
     {
         PropertyRepair? propertyRepairdb = db.PropertyRepairs.FirstOrDefault(p => p.Id == id);
-        if (propertyRepairdb != null)
+        if (propertyRepairdb == null)
         {
+            Console.WriteLine("Repair details could not be found. Deletion canceled.");
+            return false;
+        }
             try 
             {
                 db.PropertyRepairs.Remove(propertyRepairdb);
@@ -100,9 +125,6 @@ public class PropertyRepairService
             {
                 Console.WriteLine("An error occured.");
             }
-            
-        }
-        Console.WriteLine("Repair details could not be found.");
-        return false;
+           return false;
     }
 }

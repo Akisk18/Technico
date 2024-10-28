@@ -7,7 +7,7 @@ using Technico.Services;
 var owner = new PropertyOwner
 {
  
-    Name = "Akis",
+    Name = "Sozon",
     Surname = "Kiagias",
     Password = "54654",
     Email = "akis@gmail.com",
@@ -27,12 +27,12 @@ PropertyOwnerService ownerService = new PropertyOwnerService(db);
 
 //ownerService.DeletePropertyOwner(3);
 
-//ownerService.UpdatePropertyOwner(owner);
+//ownerService.UpdatePropertyOwner(owner,1);
 
 var property = new PropertyItem
 {
     PublicIdentificationNumber = "898978",
-    PropertyAddress = "Stavromenos",
+    PropertyAddress = "Stavromenos 1",
     PropertyType = Technico.Enums.PropertyType.ApartmentBuilding,
     ConstructionYear = 1995,
     OwnerVAT = "565461",
@@ -48,12 +48,12 @@ PropertyItemService propertyItemService = new PropertyItemService(db);
 
 //propertyItemService.DeletePropertyItem(owner.Id);
 
-//propertyItemService.UpdatePropertyItem(property);
+//propertyItemService.UpdatePropertyItem(property, 1);
 
 var repairDetails = new PropertyRepair
 {
     RepairDescription = "Broken pipes",
-    RepairAddress = "Heraklion",
+    RepairAddress = "Heraklion 2",
     ScheduledRepair = DateTime.Now,
     RepairType = Technico.Enums.RepairType.Plumbing,
     RepairPrice = 1500m,
@@ -67,6 +67,6 @@ PropertyRepairService propertyRepairService = new PropertyRepairService(db);
 //propertyRepairService.SearchPropertyRepair(repairDetails.ScheduledRepair);
 //propertyRepairService.CreatePropertyRepair(repairDetails, 2);
 
-//propertyRepairService.UpdatePropertyRepair(repairDetails);
+//propertyRepairService.UpdatePropertyRepair(repairDetails, 5);
 
 //propertyRepairService.DeletePropertyRepair(3);

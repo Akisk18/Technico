@@ -18,6 +18,28 @@ public class PropertyItemService
         this.db = db;
     }
 
+
+    public bool ValidateItem(PropertyItem propertyItem)
+    {
+        bool isValid = true;
+        if (propertyItem.OwnerVAT == null || propertyItem.OwnerVAT.Length != 10) 
+        {
+            isValid = false;
+            Console.WriteLine("Please enter a valid VAT number");
+        }
+        if(propertyItem.PublicIdentificationNumber == null) 
+        {
+            isValid = false;
+            Console.WriteLine("Please enter Public Identification Number.");
+        }
+        if (propertyItem.PropertyAddress == null) 
+        {
+            isValid = false;
+            Console.WriteLine("Please enter the address of the property");
+        }
+        return isValid;
+    }
+
     //Displays all details of the property
     public PropertyItem? ViewPropertyItem(int id)
     {
@@ -31,12 +53,9 @@ public class PropertyItemService
             return null;
         }
             Console.WriteLine(propertyItem);
-        if (propertyItem != null)
-        {
             foreach (var repairs in propertyItem.Repairs)
-            {
+        {
                 Console.WriteLine(repairs);
-            }
         }
         return propertyItem;
     }
@@ -44,6 +63,12 @@ public class PropertyItemService
     public PropertyItem CreatePropertyItem(PropertyItem propertyItem , int ownerId)
     {
         var owner = db.PropertyOwners.FirstOrDefault(p => p.Id == ownerId);
+
+        if (owner == null) 
+        {
+            Console.WriteLine("Owner not found. Property creation failed.");
+            return propertyItem;
+        }
         propertyItem.Owner = owner;
         propertyItem.PropertyOwnerId = ownerId;
         try
@@ -59,12 +84,14 @@ public class PropertyItemService
         return propertyItem;
     }
     //Update a propertyItem
-    public PropertyItem? UpdatePropertyItem(PropertyItem propertyItem) 
+    public PropertyItem? UpdatePropertyItem(PropertyItem propertyItem ,int id) 
     {
-        PropertyItem? propertyItemdb = db.PropertyItems.FirstOrDefault(p => p.Id == propertyItem.Id);
-        if (propertyItemdb != null)
+        PropertyItem? propertyItemdb = db.PropertyItems.FirstOrDefault(p => p.Id == id);
+        if (propertyItemdb == null)
         {
-            
+            Console.WriteLine("The Property could not be found. Update failed.");
+            return null;
+        }
             propertyItemdb.PublicIdentificationNumber = propertyItem.PublicIdentificationNumber;
             propertyItemdb.PropertyAddress = propertyItem.PropertyAddress;
             propertyItemdb.PropertyType = propertyItem.PropertyType;
@@ -81,16 +108,17 @@ public class PropertyItemService
                 Console.WriteLine("An error occured saving in the database.");
             }
             return propertyItemdb;
-        }
-        Console.WriteLine("The property could not be found.");
-        return null;
+     
     }
     //Delete a propertyItem
     public bool DeletePropertyItem(int id)
     {
         PropertyItem? propertyItemdb = db.PropertyItems.FirstOrDefault(p => p.Id==id);
-        if(propertyItemdb != null)
+        if (propertyItemdb == null)
         {
+            Console.WriteLine("Property Could not be found. Deletion failed.");
+            return false;
+        }
             try
             {
                 db.PropertyItems.Remove(propertyItemdb);
@@ -102,9 +130,8 @@ public class PropertyItemService
              {
                 Console.WriteLine("An error occured.");
              }
-        }
-        Console.WriteLine("Property Could not be found.");
-       return false;
+        return false;
+        
     }
 
 }
