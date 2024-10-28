@@ -4,47 +4,47 @@ using Technico.Repositories;
 using Technico.Services;
 
 
-var owner2 = new PropertyOwner
+var owner = new PropertyOwner
 {
  
     Name = "Akis",
     Surname = "Kiagias",
-    Password = "123456",
-    Email = "akis3@gmail.com",
-    Address = "Stavromenos",
-    VAT = "5433645",
-    PhoneNumber = "1234567890",
+    Password = "54654",
+    Email = "akis@gmail.com",
+    Address = "Phgh",
+    VAT = "544545",
+    PhoneNumber = "484554",
     UserType = Technico.Enums.UserType.Owner,
 };
 
 PropertyDbContext db = new PropertyDbContext();
 PropertyOwnerService ownerService = new PropertyOwnerService(db);
 
-var existingUser  = ownerService.Register(owner2);
-ownerService.DisplayDetails(existingUser.Id);
+//var existingUser = ownerService.Register(owner);
+//ownerService.DisplayDetails(1);
 
 
 
-//ownerService.DeletePropertyOwner(4);
+//ownerService.DeletePropertyOwner(3);
 
 //ownerService.UpdatePropertyOwner(owner);
 
 var property = new PropertyItem
 {
     PublicIdentificationNumber = "898978",
-    PropertyAddress = "Rethumno",
+    PropertyAddress = "Stavromenos",
     PropertyType = Technico.Enums.PropertyType.ApartmentBuilding,
-    ConstructionYear = 2005,
-    OwnerVAT = "4865",
-    PropertyOwnerId = owner2.Id,
-    Owner = owner2,
+    ConstructionYear = 1995,
+    OwnerVAT = "565461",
+    PropertyOwnerId = owner.Id,
+    Owner = owner,
 };
 
 PropertyItemService propertyItemService = new PropertyItemService(db);
 
 //propertyItemService.ViewPropertyItem(6);
 
-//propertyItemService.CreatePropertyItem(property, owner.Id);
+//propertyItemService.CreatePropertyItem(property, 1);
 
 //propertyItemService.DeletePropertyItem(owner.Id);
 
@@ -52,11 +52,11 @@ PropertyItemService propertyItemService = new PropertyItemService(db);
 
 var repairDetails = new PropertyRepair
 {
-    RepairDescription = "Changins frames",
-    RepairAddress = "Stavromenos",
+    RepairDescription = "Broken pipes",
+    RepairAddress = "Heraklion",
     ScheduledRepair = DateTime.Now,
-    RepairType = Technico.Enums.RepairType.Painting,
-    RepairPrice = 5000m,
+    RepairType = Technico.Enums.RepairType.Plumbing,
+    RepairPrice = 1500m,
     RepairStatus = Technico.Enums.RepairStatus.InProgress,
     PropertyItemId = property.Id,
     Property = property
@@ -64,7 +64,8 @@ var repairDetails = new PropertyRepair
 
 PropertyRepairService propertyRepairService = new PropertyRepairService(db);
 
-//propertyRepairService.CreatePropertyRepair(repairDetails, property.Id);
+//propertyRepairService.SearchPropertyRepair(repairDetails.ScheduledRepair);
+//propertyRepairService.CreatePropertyRepair(repairDetails, 2);
 
 //propertyRepairService.UpdatePropertyRepair(repairDetails);
 

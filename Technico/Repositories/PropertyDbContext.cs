@@ -20,4 +20,12 @@ public class PropertyDbContext : DbContext
         optionsBuilder.UseSqlServer(connectionString);
     }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder
+            .Entity<PropertyOwner>()
+            .HasIndex(p => p.VAT)
+            .IsUnique();
+    }
+
 }

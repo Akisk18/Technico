@@ -12,7 +12,7 @@ using Technico.Repositories;
 namespace Technico.Migrations
 {
     [DbContext(typeof(PropertyDbContext))]
-    [Migration("20241027175744_M1")]
+    [Migration("20241028153118_M1")]
     partial class M1
     {
         /// <inheritdoc />

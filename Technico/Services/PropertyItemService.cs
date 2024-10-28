@@ -46,9 +46,16 @@ public class PropertyItemService
         var owner = db.PropertyOwners.FirstOrDefault(p => p.Id == ownerId);
         propertyItem.Owner = owner;
         propertyItem.PropertyOwnerId = ownerId;
-        db.PropertyItems.Add(propertyItem);
-        db.SaveChanges();
-        Console.Write("Property Created Succesfully!");
+        try
+        {
+            db.PropertyItems.Add(propertyItem);
+            db.SaveChanges();
+            Console.Write("Property Created Succesfully!");
+        }
+        catch (Exception) 
+        {
+            Console.WriteLine("An error occured.");
+        }
         return propertyItem;
     }
     //Update a propertyItem
@@ -57,14 +64,22 @@ public class PropertyItemService
         PropertyItem? propertyItemdb = db.PropertyItems.FirstOrDefault(p => p.Id == propertyItem.Id);
         if (propertyItemdb != null)
         {
+            
             propertyItemdb.PublicIdentificationNumber = propertyItem.PublicIdentificationNumber;
             propertyItemdb.PropertyAddress = propertyItem.PropertyAddress;
             propertyItemdb.PropertyType = propertyItem.PropertyType;
             propertyItemdb.ConstructionYear = propertyItem.ConstructionYear;
             propertyItemdb.OwnerVAT = propertyItem.OwnerVAT;
             propertyItemdb.Owner = propertyItem.Owner;
-            db.SaveChanges();
-            Console.WriteLine("Property Updated!");
+            try 
+            {
+                db.SaveChanges();
+                Console.WriteLine("Property Updated!");
+            }
+            catch (Exception) 
+            {
+                Console.WriteLine("An error occured saving in the database.");
+            }
             return propertyItemdb;
         }
         Console.WriteLine("The property could not be found.");
@@ -76,10 +91,17 @@ public class PropertyItemService
         PropertyItem? propertyItemdb = db.PropertyItems.FirstOrDefault(p => p.Id==id);
         if(propertyItemdb != null)
         {
-            db.PropertyItems.Remove(propertyItemdb);
-            db.SaveChanges();
-            Console.WriteLine("Property Deleted Succesfully!");
-            return true;
+            try
+            {
+                db.PropertyItems.Remove(propertyItemdb);
+                db.SaveChanges();
+                Console.WriteLine("Property Deleted Succesfully!");
+                return true;
+            }
+            catch (Exception) 
+             {
+                Console.WriteLine("An error occured.");
+             }
         }
         Console.WriteLine("Property Could not be found.");
        return false;

@@ -16,15 +16,43 @@ public class PropertyRepairService
     {
         this.db = db;
     }
+
+    //Search repair details
+    public List<PropertyRepair> SearchPropertyRepair (DateTime searchDate)
+    {
+        var repairs = db.PropertyRepairs
+            .Where(repair => repair.ScheduledRepair.Date == searchDate.Date)
+            .ToList();
+        if (repairs.Count == 0)
+        {
+            Console.WriteLine("No repairs found for this date.");
+        }
+        Console.Write($"{repairs.Count} found in {searchDate}\n");
+        foreach (var repair in repairs)
+        {
+            Console.WriteLine(repair);
+        }
+        return repairs;
+    }
+
     //Create repair details
     public PropertyRepair CreatePropertyRepair(PropertyRepair propertyRepair , int itemId)
     {
         var item = db.PropertyItems.FirstOrDefault(p => p.Id == itemId);
         propertyRepair.PropertyItemId = itemId;
         propertyRepair.Property = item;
-        db.PropertyRepairs.Add(propertyRepair);
-        db.SaveChanges();
-        Console.WriteLine("Repair Details added succesfully!");
+
+        try
+        {
+            db.PropertyRepairs.Add(propertyRepair);
+            db.SaveChanges();
+            Console.WriteLine("Repair Details added succesfully!");
+        }
+        catch (Exception) 
+        {
+            Console.WriteLine("An error occured.");
+        }
+        
         return propertyRepair;
     }
     //Update the Repair Details
@@ -40,7 +68,16 @@ public class PropertyRepairService
             propertyRepairdb.RepairStatus = propertyRepair.RepairStatus;
             propertyRepairdb.RepairPrice = propertyRepair.RepairPrice;
             propertyRepairdb.Property = propertyRepairdb.Property;
-            Console.WriteLine("Property Repair Details Updated succesfully!");
+            try
+            {
+                db.SaveChanges();
+                Console.WriteLine("Property Repair Details Updated succesfully!");
+            }
+            catch (Exception) 
+            {
+                Console.WriteLine("An error occured.");
+            }
+            
             return propertyRepairdb;
         }
         Console.WriteLine("Repair details could not found.");
@@ -52,10 +89,18 @@ public class PropertyRepairService
         PropertyRepair? propertyRepairdb = db.PropertyRepairs.FirstOrDefault(p => p.Id == id);
         if (propertyRepairdb != null)
         {
-            db.PropertyRepairs.Remove(propertyRepairdb);
-            db.SaveChanges();
-            Console.WriteLine("Repair details deleted succesfully!");
-            return true;
+            try 
+            {
+                db.PropertyRepairs.Remove(propertyRepairdb);
+                db.SaveChanges();
+                Console.WriteLine("Repair details deleted succesfully!");
+                return true;
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("An error occured.");
+            }
+            
         }
         Console.WriteLine("Repair details could not be found.");
         return false;

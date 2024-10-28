@@ -27,9 +27,16 @@ public class PropertyOwnerService
             Console.WriteLine("User already exists.");
             return existingUser;
         }
+        try
+        {
             db.PropertyOwners.Add(propertyOwner);
             db.SaveChanges();
             Console.WriteLine("User registered succesfully!");
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("An error occured");
+        }
             return propertyOwner;
         
     }
@@ -78,8 +85,16 @@ public class PropertyOwnerService
             propertyOwnerdb.PhoneNumber = propertyOwner.PhoneNumber;
             propertyOwnerdb.Password = propertyOwner.Password;
             propertyOwnerdb.UserType = propertyOwner.UserType;
-            db.SaveChanges();
-            Console.WriteLine("Owner Details updated succesfully!");
+            try
+            {
+                db.SaveChanges();
+                Console.WriteLine("Owner Details updated succesfully!");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("An error occured saving in the database.");
+            }
+            
             return propertyOwnerdb;
 
         }
@@ -94,10 +109,17 @@ public class PropertyOwnerService
         PropertyOwner? propertyOwnerdb = db.PropertyOwners.FirstOrDefault(p => p.Id == id);
         if (propertyOwnerdb != null)
         {
-            db.PropertyOwners.Remove(propertyOwnerdb);
-            db.SaveChanges();
-            Console.WriteLine("Owner deleted succesfully!");
-            return true;
+            try
+            {
+                db.PropertyOwners.Remove(propertyOwnerdb);
+                db.SaveChanges();
+                Console.WriteLine("Owner deleted succesfully!");
+                return true;
+            }
+            catch (Exception) 
+            {
+                Console.WriteLine("An error occured.");
+            }    
         }
         Console.WriteLine("Owner could not be found");
         return false;
