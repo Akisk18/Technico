@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Technico.Interfaces;
 using Technico.Models;
 using Technico.Repositories;
 
 namespace Technico.Services;
 
-public class PropertyOwnerService
+public class PropertyOwnerService : IPropertyOwnerService
 {
     private PropertyDbContext db;
 

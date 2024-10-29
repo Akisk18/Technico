@@ -1,27 +1,43 @@
 ﻿//Test
+using Technico.Interfaces;
 using Technico.Models;
 using Technico.Repositories;
 using Technico.Services;
 
 
-var owner = new PropertyOwner
+var owner3 = new PropertyOwner
 {
  
-    Name = "Sozon",
+    Name = "Kostas",
+    Surname = "Kiagias",
+    Password = "54654",
+    Email = "kostas@gmail.com",
+    Address = "Phgh",
+    VAT = "434343",
+    PhoneNumber = "4565545",
+    UserType = Technico.Enums.UserType.Owner,
+};
+
+var owner4 = new PropertyOwner
+{
+
+    Name = "Akis",
     Surname = "Kiagias",
     Password = "54654",
     Email = "akis@gmail.com",
     Address = "Phgh",
-    VAT = "544545",
-    PhoneNumber = "484554",
+    VAT = "121212",
+    PhoneNumber = "5464",
     UserType = Technico.Enums.UserType.Owner,
 };
 
 PropertyDbContext db = new PropertyDbContext();
-PropertyOwnerService ownerService = new PropertyOwnerService(db);
+IPropertyOwnerService ownerService = new PropertyOwnerService(db);
 
-//var existingUser = ownerService.Register(owner);
-//ownerService.DisplayDetails(1);
+//var existingUser = ownerService.Register(owner3);
+//var user2 = ownerService.Register(owner4);
+ownerService.DisplayDetails(3);
+
 
 
 
@@ -36,15 +52,15 @@ var property = new PropertyItem
     PropertyType = Technico.Enums.PropertyType.ApartmentBuilding,
     ConstructionYear = 1995,
     OwnerVAT = "565461",
-    PropertyOwnerId = owner.Id,
-    Owner = owner,
+    PropertyOwnerIds = [owner3.Id , owner4.Id],
+    Owners = [owner3,owner4],
 };
 
-PropertyItemService propertyItemService = new PropertyItemService(db);
+IPropertyItemService propertyItemService = new PropertyItemService(db);
 
-//propertyItemService.ViewPropertyItem(6);
+//propertyItemService.ViewPropertyItem(2);
 
-//propertyItemService.CreatePropertyItem(property, 1);
+//propertyItemService.CreatePropertyItem(property, [3,4]);
 
 //propertyItemService.DeletePropertyItem(owner.Id);
 
@@ -62,7 +78,7 @@ var repairDetails = new PropertyRepair
     Property = property
 };
 
-PropertyRepairService propertyRepairService = new PropertyRepairService(db);
+IPropertyRepairService propertyRepairService = new PropertyRepairService(db);
 
 //propertyRepairService.SearchPropertyRepair(repairDetails.ScheduledRepair);
 //propertyRepairService.CreatePropertyRepair(repairDetails, 2);

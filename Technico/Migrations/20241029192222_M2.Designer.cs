@@ -12,8 +12,8 @@ using Technico.Repositories;
 namespace Technico.Migrations
 {
     [DbContext(typeof(PropertyDbContext))]
-    [Migration("20241028153118_M1")]
-    partial class M1
+    [Migration("20241029192222_M2")]
+    partial class M2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,21 @@ namespace Technico.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("PropertyItemPropertyOwner", b =>
+                {
+                    b.Property<int>("OwnersId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PropertiesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OwnersId", "PropertiesId");
+
+                    b.HasIndex("PropertiesId");
+
+                    b.ToTable("PropertyItemPropertyOwner");
+                });
 
             modelBuilder.Entity("Technico.Models.PropertyItem", b =>
                 {
@@ -44,8 +59,8 @@ namespace Technico.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PropertyOwnerId")
-                        .HasColumnType("int");
+                    b.Property<string>("PropertyOwnerIds")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PropertyType")
                         .HasColumnType("int");
@@ -55,8 +70,6 @@ namespace Technico.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PropertyOwnerId");
 
                     b.ToTable("PropertyItems");
                 });
@@ -98,9 +111,12 @@ namespace Technico.Migrations
 
                     b.Property<string>("VAT")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("VAT")
+                        .IsUnique();
 
                     b.ToTable("PropertyOwners");
                 });
@@ -144,15 +160,19 @@ namespace Technico.Migrations
                     b.ToTable("PropertyRepairs");
                 });
 
-            modelBuilder.Entity("Technico.Models.PropertyItem", b =>
+            modelBuilder.Entity("PropertyItemPropertyOwner", b =>
                 {
-                    b.HasOne("Technico.Models.PropertyOwner", "Owner")
-                        .WithMany("Properties")
-                        .HasForeignKey("PropertyOwnerId")
+                    b.HasOne("Technico.Models.PropertyOwner", null)
+                        .WithMany()
+                        .HasForeignKey("OwnersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Owner");
+                    b.HasOne("Technico.Models.PropertyItem", null)
+                        .WithMany()
+                        .HasForeignKey("PropertiesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Technico.Models.PropertyRepair", b =>
@@ -169,11 +189,6 @@ namespace Technico.Migrations
             modelBuilder.Entity("Technico.Models.PropertyItem", b =>
                 {
                     b.Navigation("Repairs");
-                });
-
-            modelBuilder.Entity("Technico.Models.PropertyOwner", b =>
-                {
-                    b.Navigation("Properties");
                 });
 #pragma warning restore 612, 618
         }

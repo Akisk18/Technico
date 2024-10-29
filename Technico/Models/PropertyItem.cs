@@ -16,10 +16,9 @@ public class PropertyItem
     public PropertyType PropertyType { get; set; }
     public string OwnerVAT { get; set; } = string.Empty;
     //Foreign Key
-    public int PropertyOwnerId { get; set; }
-    public PropertyOwner? Owner { get; set; }
+    public List<int>? PropertyOwnerIds { get; set; }
     public List<PropertyRepair> Repairs { get; set; } = [];
-    //public List<PropertyOwner> Owners { get; set; } = [];
+    public List<PropertyOwner> Owners { get; set; } = [];
 
     public override string ToString()
     {
