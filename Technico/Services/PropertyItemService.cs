@@ -141,12 +141,22 @@ public class PropertyItemService : IPropertyItemService
     //Delete a propertyItem
     public bool DeletePropertyItem(int id)
     {
-        PropertyItem? propertyItemdb = db.PropertyItems.FirstOrDefault(p => p.Id==id);
+        PropertyItem? propertyItemdb = db.PropertyItems.Where(p => p.Id == id)
+            .Include(p => p.Repairs)
+            .FirstOrDefault();
+
         if (propertyItemdb == null)
         {
             Console.WriteLine("Property Could not be found. Deletion failed.");
             return false;
         }
+ 
+        if (propertyItemdb.Repairs.Any(repair => repair.RepairStatus == RepairStatus.InProgress || repair.RepairStatus == RepairStatus.Pending))
+        {
+            Console.WriteLine("Properties could not be deleted because there is a Pending or InProgress repair.");
+            return false;
+        }
+        
             try
             {
                 db.PropertyItems.Remove(propertyItemdb);

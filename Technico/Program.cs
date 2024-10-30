@@ -82,17 +82,17 @@ var ownerSixth = new PropertyOwner
 PropertyDbContext db = new PropertyDbContext();
 IPropertyOwnerService ownerService = new PropertyOwnerService(db);
 
-var userFirst = ownerService.Register(ownerFirst);
+//var userFirst = ownerService.Register(ownerFirst);
 
-var userSecond = ownerService.Register(ownerSecond);
+//var userSecond = ownerService.Register(ownerSecond);
 
-var userThird = ownerService.Register(ownerThird);
+//var userThird = ownerService.Register(ownerThird);
 
-var userFourth = ownerService.Register(ownerFourth);
+//var userFourth = ownerService.Register(ownerFourth);
 
-var userFifth = ownerService.Register(ownerFifth);
+//var userFifth = ownerService.Register(ownerFifth);
 
-var userSixth = ownerService.Register(ownerSixth);
+//var userSixth = ownerService.Register(ownerSixth);
 
 
 
@@ -101,7 +101,7 @@ var userSixth = ownerService.Register(ownerSixth);
 
 
 
-//ownerService.DeletePropertyOwner(3);
+//ownerService.DeletePropertyOwner(1);
 
 //ownerService.UpdatePropertyOwner(owner,1);
 
@@ -165,17 +165,17 @@ IPropertyItemService propertyItemService = new PropertyItemService(db);
 
 //propertyItemService.ViewPropertyItem(2);
 
-var item = propertyItemService.CreatePropertyItem(property, [ownerFirst.Id]);
+//var item = propertyItemService.CreatePropertyItem(property, [ownerFirst.Id]);
 
-var itemFirst = propertyItemService.CreatePropertyItem(propertyFirst, [ownerFirst.Id, ownerSecond.Id]);
+//var itemFirst = propertyItemService.CreatePropertyItem(propertyFirst, [ownerFirst.Id, ownerSecond.Id]);
 
-var itemSecond = propertyItemService.CreatePropertyItem(propertySecond, [ownerThird.Id]);
+//var itemSecond = propertyItemService.CreatePropertyItem(propertySecond, [ownerThird.Id]);
 
-var itemThird = propertyItemService.CreatePropertyItem(propertyThird, [ownerFourth.Id, ownerFifth.Id]);
+//var itemThird = propertyItemService.CreatePropertyItem(propertyThird, [ownerFourth.Id, ownerFifth.Id]);
 
-var itemFourth = propertyItemService.CreatePropertyItem(propertyFourth, [ownerSixth.Id]);
+//var itemFourth = propertyItemService.CreatePropertyItem(propertyFourth, [ownerSixth.Id]);
 
-//propertyItemService.DeletePropertyItem(owner.Id);
+//propertyItemService.DeletePropertyItem(5);
 
 //propertyItemService.UpdatePropertyItem(property, 1);
 
@@ -185,8 +185,8 @@ var repairDetails = new PropertyRepair
     RepairAddress = "New York 45",
     ScheduledRepair = DateTime.Now,
     RepairType = RepairType.Plumbing,
-    RepairPrice = 1500m,
-    RepairStatus = RepairStatus.InProgress,
+    RepairPrice = 4500m,
+    RepairStatus = RepairStatus.Complete,
     PropertyItemId = propertyFirst.Id,
     Property = propertyFirst
 };
@@ -222,7 +222,7 @@ var repairDetailsFourth = new PropertyRepair
     ScheduledRepair = DateTime.Now,
     RepairType = RepairType.Frames,
     RepairPrice = 4500m,
-    RepairStatus = RepairStatus.InProgress,
+    RepairStatus = RepairStatus.Complete,
     PropertyItemId = propertyFourth.Id,
     Property = propertyFourth
 };
@@ -242,15 +242,18 @@ var repairDetailsFifth = new PropertyRepair
 IPropertyRepairService propertyRepairService = new PropertyRepairService(db);
 
 //propertyRepairService.SearchPropertyRepair(repairDetails.ScheduledRepair);
-var repairFirst = propertyRepairService.CreatePropertyRepair(repairDetails, propertyFirst.Id);
+//var repairFirst = propertyRepairService.CreatePropertyRepair(repairDetails, propertyFirst.Id);
 
-var repairSecond = propertyRepairService.CreatePropertyRepair(repairDetailsSecond, propertySecond.Id);
+//var repairSecond = propertyRepairService.CreatePropertyRepair(repairDetailsSecond, propertySecond.Id);
 
-var repairThird = propertyRepairService.CreatePropertyRepair(repairDetailsThird, propertyThird.Id);
+//var repairThird = propertyRepairService.CreatePropertyRepair(repairDetailsThird, propertyThird.Id);
 
-var repairFourth = propertyRepairService.CreatePropertyRepair(repairDetailsFourth, propertyFourth.Id);
+//var repairFourth = propertyRepairService.CreatePropertyRepair(repairDetailsFourth, propertyFourth.Id);
 
-var repairFifth = propertyRepairService.CreatePropertyRepair(repairDetailsFifth, propertyFourth.Id);
-//propertyRepairService.UpdatePropertyRepair(repairDetails, 5);
+//var repairFifth = propertyRepairService.CreatePropertyRepair(repairDetailsFifth, propertyFourth.Id);
+
+//propertyRepairService.UpdatePropertyRepair(repairDetailsFourth, 4);
+
+//propertyRepairService.UpdatePropertyRepair(repairDetailsFifth, 5);
 
 //propertyRepairService.DeletePropertyRepair(3);

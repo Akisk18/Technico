@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Technico.Interfaces;
 using Technico.Models;
-using Technico.Models.Enums;
 using Technico.Repositories;
 
 namespace Technico.Services;
@@ -163,10 +162,17 @@ public class PropertyOwnerService : IPropertyOwnerService
     //Delete Owner
     public bool DeletePropertyOwner(int id)
     {
-        PropertyOwner? propertyOwnerdb = db.PropertyOwners.FirstOrDefault(p => p.Id == id);
+        PropertyOwner? propertyOwnerdb = db.PropertyOwners.Where(p => p.Id == id)
+           .Include(p => p.Properties)
+           .FirstOrDefault();
         if (propertyOwnerdb == null)
         {
             Console.WriteLine("Owner could not be found. Deletion failed.");
+            return false;
+        }
+        if(propertyOwnerdb.Properties.Count>0)
+        {
+            Console.WriteLine("Owner cannot be deleted because registered properties exist.");
             return false;
         }
             try
