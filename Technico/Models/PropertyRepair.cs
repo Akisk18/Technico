@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Technico.Enums;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Technico.Models;
@@ -22,9 +21,4 @@ public class PropertyRepair
     [Precision(8, 2)]
     public decimal RepairPrice { get; set; }
     public PropertyItem? Property {  get; set; }
-
-    public override string ToString()
-    {
-        return $"Repair ID: {Id}, Description: {RepairDescription}, Date: {ScheduledRepair}, Cost: {RepairPrice}";
-    }
 }

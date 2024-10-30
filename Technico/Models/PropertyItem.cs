@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Technico.Enums;
 
 namespace Technico.Models;
 
@@ -19,9 +18,4 @@ public class PropertyItem
     public List<int>? PropertyOwnerIds { get; set; }
     public List<PropertyRepair> Repairs { get; set; } = [];
     public List<PropertyOwner> Owners { get; set; } = [];
-
-    public override string ToString()
-    {
-        return $"Property ID: {Id}, Address: {PropertyAddress}, Year: {ConstructionYear}, Type: {PropertyType}";
-    }
 }

@@ -22,7 +22,7 @@ namespace Technico.Migrations
                     ConstructionYear = table.Column<int>(type: "int", nullable: false),
                     PropertyType = table.Column<int>(type: "int", nullable: false),
                     OwnerVAT = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PropertyOwnerId = table.Column<int>(type: "int", nullable: false)
+                    PropertyOwnerIds = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

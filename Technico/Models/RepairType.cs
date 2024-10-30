@@ -4,9 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Technico.Enums;
+namespace Technico.Models;
 
-public enum RepairStatus
+public enum RepairType
 {
-    Pending, InProgress, Complete
+    Painting,
+    Insulation,
+    Frames,
+    Plumbing,
+    ElectricalWork
 }

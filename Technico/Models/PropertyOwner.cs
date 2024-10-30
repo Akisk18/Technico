@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Technico.Enums;
 
 namespace Technico.Models;
 
@@ -19,9 +18,4 @@ public class PropertyOwner
     public string Password { get; set; } = string.Empty;
     public UserType UserType { get; set; }
     public List<PropertyItem> Properties { get; set; } = [];
-
-    public override string ToString()
-    {
-        return $"ID: {Id}, Name: {Name} Surname: {Surname}, VAT: {VAT}, Address: {Address}, Email: {Email}";
-    }
 }

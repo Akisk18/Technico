@@ -12,8 +12,8 @@ using Technico.Repositories;
 namespace Technico.Migrations
 {
     [DbContext(typeof(PropertyDbContext))]
-    [Migration("20241029192222_M2")]
-    partial class M2
+    [Migration("20241030194110_M1")]
+    partial class M1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -6,13 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Technico.Interfaces;
 using Technico.Models;
+using Technico.Models.Enums;
 using Technico.Repositories;
 
 namespace Technico.Services;
 
 public class PropertyOwnerService : IPropertyOwnerService
 {
-    private PropertyDbContext db;
+    private readonly PropertyDbContext db;
 
     public PropertyOwnerService(PropertyDbContext db)
     {
@@ -23,6 +24,11 @@ public class PropertyOwnerService : IPropertyOwnerService
     public PropertyOwner Register(PropertyOwner propertyOwner)
     {
         var existingUser = db.PropertyOwners.FirstOrDefault(x => x.VAT == propertyOwner.VAT);
+
+        if (!ValidateOwner(propertyOwner))
+        {
+            Console.WriteLine("Validation failed. Register canceled.");
+        }
         if (existingUser != null)
         {
             Console.WriteLine("User already exists.");
@@ -33,12 +39,14 @@ public class PropertyOwnerService : IPropertyOwnerService
             db.PropertyOwners.Add(propertyOwner);
             db.SaveChanges();
             Console.WriteLine("User registered succesfully!");
+            return propertyOwner;
         }
         catch (Exception)
         {
             Console.WriteLine("An error occured");
+            return null;
         }
-            return propertyOwner;
+          
         
     }
 
@@ -65,7 +73,7 @@ public class PropertyOwnerService : IPropertyOwnerService
             isValid = false;
             Console.Write("VAT must be 10 characters");
         }
-        if (propertyOwner.Password == null || propertyOwner.Password.Length !=8)
+        if (propertyOwner.Password == null || propertyOwner.Password.Length <8)
         {
             isValid = false;
             Console.WriteLine("Password must have at least 8 numbers/characters.");
@@ -90,18 +98,24 @@ public class PropertyOwnerService : IPropertyOwnerService
             Console.WriteLine("Owner not Found");
             return;
         }
-        Console.WriteLine($"Owner Details : {propertyOwner}");
+        Console.WriteLine("---------------------------Owner----------------------");
+        Console.WriteLine($"Owner Details : ID: { propertyOwner.Id}, Name: { propertyOwner.Name} Surname: { propertyOwner.Surname}, VAT: { propertyOwner.VAT}, Address: { propertyOwner.Address}, Email: { propertyOwner.Email}");
+
         if (propertyOwner.Properties != null) 
         {
-            Console.WriteLine("\nProperties: ");
+            
             foreach (var properties in propertyOwner.Properties)
             {
-                Console.WriteLine(properties);
+                Console.WriteLine("---------------------------Property----------------------");
+                Console.WriteLine($"Property ID: {properties.Id}, Address: {properties.PropertyAddress}, Year: {properties.ConstructionYear}, Type: {properties.PropertyType}");
+                
                 if (properties.Repairs != null)
                 {
+                   
                     foreach (var repairs in properties.Repairs)
                     {
-                        Console.WriteLine(repairs);
+                        Console.WriteLine("---------------------------Repair-------------------------");
+                        Console.WriteLine($"Repair ID: {repairs.Id}, Description: {repairs.RepairDescription}, Date: {repairs.ScheduledRepair}, Cost: {repairs.RepairPrice}");
                     }
                 }
             }
@@ -113,6 +127,12 @@ public class PropertyOwnerService : IPropertyOwnerService
     public PropertyOwner? UpdatePropertyOwner(PropertyOwner propertyOwner , int id)
     {
         PropertyOwner? propertyOwnerdb = db.PropertyOwners.FirstOrDefault(p => p.Id == id);
+
+        if (!ValidateOwner(propertyOwner))
+        {
+            Console.WriteLine("Validation failed. Update canceled.");
+            return null;
+        }
         if (propertyOwnerdb == null)
         {
             Console.WriteLine("No owner found. Owner Update failed.");
@@ -130,13 +150,15 @@ public class PropertyOwnerService : IPropertyOwnerService
             {
                 db.SaveChanges();
                 Console.WriteLine("Owner Details updated succesfully!");
+                return propertyOwnerdb;
             }
             catch (Exception)
             {
                 Console.WriteLine("An error occured saving in the database.");
+                return null;
             }
             
-            return propertyOwnerdb;
+           
     }
     //Delete Owner
     public bool DeletePropertyOwner(int id)
@@ -157,7 +179,8 @@ public class PropertyOwnerService : IPropertyOwnerService
             catch (Exception) 
             {
                 Console.WriteLine("An error occured.");
+                return false;
             }       
-        return false;
+        
     }
 }

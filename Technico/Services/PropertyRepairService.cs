@@ -11,7 +11,7 @@ namespace Technico.Services;
 
 public class PropertyRepairService : IPropertyRepairService
 {
-    private PropertyDbContext db;
+    private readonly PropertyDbContext db;
 
     public PropertyRepairService(PropertyDbContext db)
     {
@@ -47,7 +47,8 @@ public class PropertyRepairService : IPropertyRepairService
         Console.Write($"{repairs.Count} found in {searchDate}\n");
         foreach (var repair in repairs)
         {
-            Console.WriteLine(repair);
+            Console.WriteLine($"Repair ID: {repair.Id}, Description: {repair.RepairDescription}, Date: {repair.ScheduledRepair}, Cost: {repair.RepairPrice}");
+            
         }
         return repairs;
     }
@@ -58,30 +59,43 @@ public class PropertyRepairService : IPropertyRepairService
         var item = db.PropertyItems.FirstOrDefault(p => p.Id == itemId);
         propertyRepair.PropertyItemId = itemId;
         propertyRepair.Property = item;
+        if (!ValidateRepair(propertyRepair)) 
+        {
+            Console.WriteLine("Validation failed. Creation of Repair details failed.");
+            return null;
+        }
 
         if (item == null)
         {
             Console.WriteLine("Property not found. Creation of repair detail failed.");
-            return propertyRepair;
+            return null;
         }
 
         try
         {
             db.PropertyRepairs.Add(propertyRepair);
             db.SaveChanges();
-            Console.WriteLine("Repair Details added succesfully!");
+            Console.WriteLine("\nRepair Details added succesfully!");
+            return propertyRepair;
         }
         catch (Exception) 
         {
             Console.WriteLine("An error occured saving in the database.");
+            return null;
         }
         
-        return propertyRepair;
+       
     }
     //Update the Repair Details
     public PropertyRepair? UpdatePropertyRepair(PropertyRepair propertyRepair, int id)
     {
         PropertyRepair? propertyRepairdb = db.PropertyRepairs.FirstOrDefault(p => p.Id == id);
+
+        if (!ValidateRepair(propertyRepair)) 
+        {
+            Console.WriteLine("Validation failed. Creation of Repair details failed.");
+            return null ;
+        }
         if (propertyRepairdb == null)
         {
             Console.WriteLine("Repair details could not be found. Update failed.");
@@ -98,13 +112,15 @@ public class PropertyRepairService : IPropertyRepairService
             {
                 db.SaveChanges();
                 Console.WriteLine("Property Repair Details Updated succesfully!");
+                return propertyRepairdb;
             }
             catch (Exception) 
             {
                 Console.WriteLine("An error occured.");
+                return null;
             }
             
-            return propertyRepairdb;
+            
     }
     //Delete a propertyRepair
     public bool DeletePropertyRepair(int id)
@@ -125,7 +141,8 @@ public class PropertyRepairService : IPropertyRepairService
             catch (Exception)
             {
                 Console.WriteLine("An error occured.");
+               return false;
             }
-           return false;
+           
     }
 }

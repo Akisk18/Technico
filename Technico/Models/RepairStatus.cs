@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Technico.Enums;
+namespace Technico.Models;
 
-public enum UserType
+public enum RepairStatus
 {
-    Owner, Admin
+    Pending, InProgress, Complete
 }

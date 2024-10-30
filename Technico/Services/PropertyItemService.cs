@@ -12,7 +12,7 @@ namespace Technico.Services;
 
 public class PropertyItemService : IPropertyItemService
 {
-    private PropertyDbContext db;
+    private readonly PropertyDbContext db;
 
     public PropertyItemService(PropertyDbContext db)
     {
@@ -58,13 +58,14 @@ public class PropertyItemService : IPropertyItemService
         {
             foreach (var owner in propertyItem.Owners)
             {
-                Console.WriteLine(owner);
+                Console.WriteLine($"Owner Details : ID: {owner.Id}, Name: {owner.Name} Surname: {owner.Surname}, VAT: {owner.VAT}, Address: {owner.Address}, Email: {owner.Email}");
+                
             }
         }
-            Console.WriteLine(propertyItem);
-            foreach (var repairs in propertyItem.Repairs)
+        Console.WriteLine($"Property ID: {propertyItem.Id}, Address: {propertyItem.PropertyAddress}, Year: {propertyItem.ConstructionYear}, Type: {propertyItem.PropertyType}");
+        foreach (var repairs in propertyItem.Repairs)
         {
-                Console.WriteLine(repairs);
+            Console.WriteLine($"Repair ID: {repairs.Id}, Description: {repairs.RepairDescription}, Date: {repairs.ScheduledRepair}, Cost: {repairs.RepairPrice}");
         }
         return propertyItem;
     }
@@ -72,6 +73,12 @@ public class PropertyItemService : IPropertyItemService
     public PropertyItem CreatePropertyItem(PropertyItem propertyItem , List<int> ownerIds)
     {
         var owners = db.PropertyOwners.Where(p => ownerIds.Contains(p.Id)).ToList();
+
+        if (!ValidateItem(propertyItem))
+        {
+            Console.WriteLine("Validation failed. Creation of Property canceled");
+            return null;
+        }
 
         if (owners == null) 
         {
@@ -85,12 +92,14 @@ public class PropertyItemService : IPropertyItemService
             db.PropertyItems.Add(propertyItem);
             db.SaveChanges();
             Console.Write("Property Created Succesfully!");
+            return propertyItem;
         }
         catch (Exception ex) 
         {
             Console.WriteLine(ex.Message);
+            return null;
         }
-        return propertyItem;
+       
     }
     //Update a propertyItem
     public PropertyItem? UpdatePropertyItem(PropertyItem propertyItem ,int id) 
@@ -98,6 +107,12 @@ public class PropertyItemService : IPropertyItemService
         PropertyItem? propertyItemdb = db.PropertyItems
             .Include(p => p.Owners)
             .FirstOrDefault(p => p.Id == id);
+
+        if (!ValidateItem(propertyItem))
+        {
+            Console.WriteLine("Validation failed. Creation of Property canceled");
+            return null;
+        }
         if (propertyItemdb == null)
         {
             Console.WriteLine("The Property could not be found. Update failed.");
@@ -113,12 +128,14 @@ public class PropertyItemService : IPropertyItemService
             {
                 db.SaveChanges();
                 Console.WriteLine("Property Updated!");
-            }
+                return propertyItemdb;
+        }
             catch (Exception) 
             {
                 Console.WriteLine("An error occured saving in the database.");
+                return null;
             }
-            return propertyItemdb;
+            
      
     }
     //Delete a propertyItem
@@ -140,8 +157,9 @@ public class PropertyItemService : IPropertyItemService
             catch (Exception) 
              {
                 Console.WriteLine("An error occured.");
+                return false;
              }
-        return false;
+       
         
     }
 

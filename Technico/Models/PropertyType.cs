@@ -4,13 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Technico.Enums;
+namespace Technico.Models;
 
-public enum RepairType
+public enum PropertyType
 {
-    Painting,
-    Insulation,
-    Frames,
-    Plumbing,
-    ElectricalWork
+    DetachedHouse, Maisonet, ApartmentBuilding
 }

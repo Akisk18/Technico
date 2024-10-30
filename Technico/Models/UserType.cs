@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Technico.Enums;
+namespace Technico.Models;
 
-public enum PropertyType
+public enum UserType
 {
-    DetachedHouse, Maisonet, ApartmentBuilding
+    Owner, Proffessional
 }
