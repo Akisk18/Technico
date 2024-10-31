@@ -105,7 +105,7 @@ public class PropertyOwnerService : IPropertyOwnerService
     }
 
     //Display all details
-    public void DisplayDetails(int id)
+    public ResponseApi<PropertyOwner> DisplayDetails(int id)
     {
         var propertyOwner = db.PropertyOwners.Where(p => p.Id == id)
             .Include(p => p.Properties)
@@ -114,38 +114,26 @@ public class PropertyOwnerService : IPropertyOwnerService
         if (propertyOwner == null)
         {
             Console.WriteLine("Owner not Found");
-            return;
-        }
-        Console.WriteLine("---------------------------Owner----------------------");
-        Console.WriteLine($"Owner Details : ID: { propertyOwner.Id}, Name: { propertyOwner.Name} Surname: { propertyOwner.Surname}, VAT: { propertyOwner.VAT}, Address: { propertyOwner.Address}, Email: { propertyOwner.Email}");
-
-        if (propertyOwner.Properties != null) 
-        {
-            
-            foreach (var properties in propertyOwner.Properties)
+            return new ResponseApi<PropertyOwner>
             {
-                Console.WriteLine("---------------------------Property----------------------");
-                Console.WriteLine($"Property ID: {properties.Id}, Address: {properties.PropertyAddress}, Year: {properties.ConstructionYear}, Type: {properties.PropertyType}");
-                
-                if (properties.Repairs != null)
-                {
-                   
-                    foreach (var repairs in properties.Repairs)
-                    {
-                        Console.WriteLine("---------------------------Repair-------------------------");
-                        Console.WriteLine($"Repair ID: {repairs.Id}, Description: {repairs.RepairDescription}, Date: {repairs.ScheduledRepair}, Cost: {repairs.RepairPrice}");
-                    }
-                }
-            }
-
+                Message = "Owner not found",
+                Status = 1,
+            };
         }
+        
+            return new ResponseApi<PropertyOwner>
+            {
+                Message = "Success",
+                Status = 0,
+                Value = propertyOwner
+            };
     }
 
     //Update Owner Details
     public ResponseApi<PropertyOwner> UpdatePropertyOwner(PropertyOwner propertyOwner , int id)
     {
-        PropertyOwner? propertyOwnerdb = db.PropertyOwners.FirstOrDefault(p => p.Id == id);
-
+            PropertyOwner? propertyOwnerdb = db.PropertyOwners.FirstOrDefault(p => p.Id == id);
+  
         if (!ValidateOwner(propertyOwner))
         {
             Console.WriteLine("Validation failed. Update canceled.");
@@ -155,6 +143,7 @@ public class PropertyOwnerService : IPropertyOwnerService
                 Status=1
             };
         }
+
         if (propertyOwnerdb == null)
         {
             Console.WriteLine("No owner found. Owner Update failed.");
@@ -164,36 +153,36 @@ public class PropertyOwnerService : IPropertyOwnerService
                 Status = 1
             };
         }
-            propertyOwnerdb.Name = propertyOwner.Name;
-            propertyOwnerdb.Surname = propertyOwner.Surname;
-            propertyOwnerdb.VAT = propertyOwner.VAT;
-            propertyOwnerdb.Address = propertyOwner.Address;
-            propertyOwnerdb.Email = propertyOwner.Email;
-            propertyOwnerdb.PhoneNumber = propertyOwner.PhoneNumber;
-            propertyOwnerdb.Password = propertyOwner.Password;
-            propertyOwnerdb.UserType = propertyOwner.UserType;
-            try
+        propertyOwnerdb.Name = propertyOwner.Name;
+        propertyOwnerdb.Surname = propertyOwner.Surname;
+        propertyOwnerdb.VAT = propertyOwner.VAT;
+        propertyOwnerdb.Address = propertyOwner.Address;
+        propertyOwnerdb.Email = propertyOwner.Email;
+        propertyOwnerdb.PhoneNumber = propertyOwner.PhoneNumber;
+        propertyOwnerdb.Password = propertyOwner.Password;
+        propertyOwnerdb.UserType = propertyOwner.UserType;
+        try
+        {
+            db.SaveChanges();
+            Console.WriteLine("Owner Details updated succesfully!");
+            return new ResponseApi<PropertyOwner>
             {
-                db.SaveChanges();
-                Console.WriteLine("Owner Details updated succesfully!");
-                return new ResponseApi<PropertyOwner>
-                {
-                    Message = "Owner Details updated succesfully",
-                    Status = 0,
-                    Value = propertyOwnerdb
-                };
-            }
-            catch (Exception)
+                Message = "Owner Details updated succesfully",
+                Status = 0,
+                Value = propertyOwnerdb
+            };
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("An error occured while saving in the database.");
+            return new ResponseApi<PropertyOwner>
             {
-                Console.WriteLine("An error occured while saving in the database.");
-                return new ResponseApi<PropertyOwner>
-                {
-                    Message="An error occured while saving in the database.",
-                    Status=-1
-                };
-            }
-            
-           
+                Message = "An error occured while saving in the database.",
+                Status = -1
+            };
+        }
+
+
     }
     //Delete Owner
     public bool DeletePropertyOwner(int id)

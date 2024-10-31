@@ -41,16 +41,7 @@ public class PropertyRepairService : IPropertyRepairService
         var repairs = db.PropertyRepairs
             .Where(repair => repair.ScheduledRepair.Date == searchDate.Date)
             .ToList();
-        if (repairs.Count == 0)
-        {
-            Console.WriteLine("No repairs found for this date.");
-        }
-        Console.Write($"{repairs.Count} found in {searchDate}\n");
-        foreach (var repair in repairs)
-        {
-            Console.WriteLine($"Repair ID: {repair.Id}, Description: {repair.RepairDescription}, Date: {repair.ScheduledRepair}, Cost: {repair.RepairPrice}");
-            
-        }
+        
         return repairs;
     }
 

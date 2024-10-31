@@ -43,7 +43,7 @@ public class PropertyItemService : IPropertyItemService
     }
 
     //Displays all details of the property
-    public void ViewPropertyItem(int id)
+    public ResponseApi<PropertyItem> ViewPropertyItem(int id)
     {
        var propertyItem = db.PropertyItems.Where(p => p.Id == id)
             .Include(p => p.Repairs)
@@ -53,21 +53,18 @@ public class PropertyItemService : IPropertyItemService
         if (propertyItem == null)
         {
             Console.WriteLine("Property not found.");
-            return;
-        }
-        if (propertyItem.Owners.Count > 1)
-        {
-            foreach (var owner in propertyItem.Owners)
+            return new ResponseApi<PropertyItem>
             {
-                Console.WriteLine($"Owner Details : ID: {owner.Id}, Name: {owner.Name} Surname: {owner.Surname}, VAT: {owner.VAT}, Address: {owner.Address}, Email: {owner.Email}");
-                
-            }
+                Message = "Property not found.",
+                Status = 1
+            };
         }
-        Console.WriteLine($"Property ID: {propertyItem.Id}, Address: {propertyItem.PropertyAddress}, Year: {propertyItem.ConstructionYear}, Type: {propertyItem.PropertyType}");
-        foreach (var repairs in propertyItem.Repairs)
+        return new ResponseApi<PropertyItem>
         {
-            Console.WriteLine($"Repair ID: {repairs.Id}, Description: {repairs.RepairDescription}, Date: {repairs.ScheduledRepair}, Cost: {repairs.RepairPrice}");
-        }
+            Message = "Success",
+            Status = 0,
+            Value = propertyItem
+        };
     }
     //Creates a new propertyItem
     public ResponseApi<PropertyItem> CreatePropertyItem(PropertyItem propertyItem , List<int> ownerIds)
@@ -82,8 +79,7 @@ public class PropertyItemService : IPropertyItemService
                 Message = "Validation failed. Creation of Property canceled",
                 Status = 1
             };
-        }
-
+        }    
         if (owners == null) 
         {
             Console.WriteLine("Owner not found. Property creation failed.");
@@ -99,7 +95,7 @@ public class PropertyItemService : IPropertyItemService
         {
             db.PropertyItems.Add(propertyItem);
             db.SaveChanges();
-            Console.Write("Property Created Succesfully!");
+            Console.Write("\nProperty Created Succesfully!");
             return new ResponseApi<PropertyItem>
             {
                 Message = "Property Created Succesfully!",
@@ -122,7 +118,6 @@ public class PropertyItemService : IPropertyItemService
     public ResponseApi<PropertyItem> UpdatePropertyItem(PropertyItem propertyItem ,int id) 
     {
         PropertyItem? propertyItemdb = db.PropertyItems
-            .Include(p => p.Owners)
             .FirstOrDefault(p => p.Id == id);
 
         if (!ValidateItem(propertyItem))
@@ -149,26 +144,27 @@ public class PropertyItemService : IPropertyItemService
             propertyItemdb.ConstructionYear = propertyItem.ConstructionYear;
             propertyItemdb.OwnerVAT = propertyItem.OwnerVAT;
             propertyItemdb.Owners = propertyItem.Owners;
-            try 
+            
+        try
+        {
+            db.SaveChanges();
+            Console.WriteLine("Property Updated!");
+            return new ResponseApi<PropertyItem>
             {
-                db.SaveChanges();
-                Console.WriteLine("Property Updated!");
-                return new ResponseApi<PropertyItem>
-                {
-                    Message = "Property Updated!",
-                    Status = 0,
-                    Value = propertyItemdb
-                };
+                Message = "Property Updated!",
+                Status = 0,
+                Value = propertyItemdb
+            };
         }
-            catch (Exception) 
+        catch (Exception)
+        {
+            Console.WriteLine("An error occured saving in the database.");
+            return new ResponseApi<PropertyItem>
             {
-                Console.WriteLine("An error occured saving in the database.");
-                return new ResponseApi<PropertyItem>
-                {
-                    Message = "An error occured saving in the database.",
-                    Status = -1,
-                };
-            }
+                Message = "An error occured saving in the database.",
+                Status = -1,
+            };
+        }
             
      
     }

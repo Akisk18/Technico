@@ -1,10 +1,11 @@
-﻿//Test
+﻿
 using System.Net;
 using Technico.Interfaces;
 using Technico.Models;
 using Technico.Repositories;
 using Technico.Services;
 
+//Test
 
 var ownerFirst = new PropertyOwner
 {
@@ -72,7 +73,7 @@ var ownerSixth = new PropertyOwner
     Surname = "Buffay",
     Password = "715254578",
     Email = "phoebe@gmail.com",
-    Address = "New York 119",
+    Address = "New York 121",
     VAT = "4274355831",
     PhoneNumber = "122457896",
     UserType = UserType.Owner,
@@ -82,28 +83,76 @@ var ownerSixth = new PropertyOwner
 PropertyDbContext db = new PropertyDbContext();
 IPropertyOwnerService ownerService = new PropertyOwnerService(db);
 
-//var userFirst = ownerService.Register(ownerSixth);
-//ownerService.UpdatePropertyOwner(ownerSixth,3);
+//Creating Users.
+var userFirst = ownerService.Register(ownerFirst);
 
-//var userSecond = ownerService.Register(ownerSecond);
+var userSecond = ownerService.Register(ownerSecond);
 
-//var userThird = ownerService.Register(ownerThird);
+var userThird = ownerService.Register(ownerThird);
 
-//var userFourth = ownerService.Register(ownerFourth);
+var userFourth = ownerService.Register(ownerFourth);
 
-//var userFifth = ownerService.Register(ownerFifth);
+var userFifth = ownerService.Register(ownerFifth);
 
-//var userSixth = ownerService.Register(ownerSixth);
-
-
-
-ownerService.DisplayDetails(3);
+var userSixth = ownerService.Register(ownerSixth);
 
 
+//Updating a User
 
+var updatedUser = new PropertyOwner
+{
+    Name = "Phoebe",
+    Surname = "Buffay",
+    Password = "715254578",
+    Email = "phoebe@gmail.com",
+    Address = "Los Angeles 14",
+    VAT = "4274355831",
+    PhoneNumber = "122457896",
+    UserType = UserType.Owner,
+};
 
-//ownerService.DeletePropertyOwner(1);
+ownerService.UpdatePropertyOwner(updatedUser, 6);
 
+//Deleting a user
+//A user cant be deleted if he has properties registered.
+ownerService.DeletePropertyOwner(1);
+
+//Displaying all the information of an owner.
+var ownerResponse = ownerService.DisplayDetails(4);
+
+if (ownerResponse.Status == 0)
+{
+    var ownerToDisplay = ownerResponse.Value;
+
+    Console.WriteLine("---------------------------Owner----------------------");
+    Console.WriteLine($"Owner Details: ID: {ownerToDisplay.Id}, Name: {ownerToDisplay.Name}, Surname: {ownerToDisplay.Surname}, VAT: {ownerToDisplay.VAT}, Address: {ownerToDisplay.Address}, Email: {ownerToDisplay.Email}");
+
+    if (ownerToDisplay.Properties != null && ownerToDisplay.Properties.Any())
+    {
+        foreach (var property1 in ownerToDisplay.Properties)
+        {
+            Console.WriteLine("---------------------------Property----------------------");
+            Console.WriteLine($"Property ID: {property1.Id}, Address: {property1.PropertyAddress}, Year: {property1.ConstructionYear}, Type: {property1.PropertyType}");
+
+            if (property1.Repairs != null && property1.Repairs.Any())
+            {
+                foreach (var repair in property1.Repairs)
+                {
+                    Console.WriteLine("---------------------------Repair-------------------------");
+                    Console.WriteLine($"Repair ID: {repair.Id}, Description: {repair.RepairDescription}, Date: {repair.ScheduledRepair}, Cost: {repair.RepairPrice}");
+                }
+            }
+        }
+    }
+    else
+    {
+        Console.WriteLine("No properties found for this owner.");
+    }
+}
+else
+{
+    Console.WriteLine($"Error: {ownerResponse.Message}");
+}
 
 
 var property = new PropertyItem
@@ -161,24 +210,89 @@ var propertyFourth = new PropertyItem
     Owners = [ownerSixth],
 };
 
-
 IPropertyItemService propertyItemService = new PropertyItemService(db);
 
-//propertyItemService.ViewPropertyItem(2);
+//Creation of the Properties.
+var item = propertyItemService.CreatePropertyItem(property, [ownerFirst.Id]);
+//A property can have multiple owners.
+var itemFirst = propertyItemService.CreatePropertyItem(propertyFirst, [ownerFirst.Id, ownerSecond.Id]);
 
-//var item = propertyItemService.CreatePropertyItem(property, [ownerFirst.Id]);
+var itemSecond = propertyItemService.CreatePropertyItem(propertySecond, [ownerThird.Id]);
 
-//var itemFirst = propertyItemService.CreatePropertyItem(propertyFirst, [ownerFirst.Id, ownerSecond.Id]);
+var itemThird = propertyItemService.CreatePropertyItem(propertyThird, [ownerFourth.Id, ownerFifth.Id]);
 
-//var itemSecond = propertyItemService.CreatePropertyItem(propertySecond, [ownerThird.Id]);
+var itemFourth = propertyItemService.CreatePropertyItem(propertyFourth, [ownerSixth.Id]);
 
-//var itemThird = propertyItemService.CreatePropertyItem(propertyThird, [ownerFourth.Id, ownerFifth.Id]);
 
-//var itemFourth = propertyItemService.CreatePropertyItem(propertyFourth, [ownerSixth.Id]);
 
-//propertyItemService.DeletePropertyItem(5);
+//Deleting a property
+//A property cant be deleted if the status is on Pending or InProggress
+propertyItemService.DeletePropertyItem(5);
 
-//propertyItemService.UpdatePropertyItem(property, 1);
+//Updating property details
+var updatedProperty = new PropertyItem
+{
+    PublicIdentificationNumber = "2659782452",
+    PropertyAddress = "New York 452",
+    PropertyType = PropertyType.ApartmentBuilding,
+    ConstructionYear = 2005,
+    OwnerVAT = "5234614452",
+};
+
+propertyItemService.UpdatePropertyItem(updatedProperty, 5);
+
+//Displaying Property details with the owners if a property have multiple owners.
+var propertyResponse = propertyItemService.ViewPropertyItem(2);
+
+if (propertyResponse.Status == 0)
+{
+    var propertyToDisplay = propertyResponse.Value;
+
+    if (propertyToDisplay != null)
+    {
+        if (propertyToDisplay.Owners != null && propertyToDisplay.Owners.Count > 0)
+        {
+            foreach (var owner in propertyToDisplay.Owners)
+            {
+                if (owner != null)
+                {
+                    Console.WriteLine($"Owner Details: ID: {owner.Id}, Name: {owner.Name}, Surname: {owner.Surname}, VAT: {owner.VAT}, Address: {owner.Address}, Email: {owner.Email}");
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine("No owners found for this property.");
+        }
+
+        // Display Property Details
+        Console.WriteLine($"Property ID: {propertyToDisplay.Id}, Address: {propertyToDisplay.PropertyAddress}, Year: {propertyToDisplay.ConstructionYear}, Type: {propertyToDisplay.PropertyType}");
+
+        if (propertyToDisplay.Repairs != null && propertyToDisplay.Repairs.Count > 0)
+        {
+            foreach (var repair in propertyToDisplay.Repairs)
+            {
+                if (repair != null)
+                {
+                    Console.WriteLine($"Repair ID: {repair.Id}, Description: {repair.RepairDescription}, Date: {repair.ScheduledRepair}, Cost: {repair.RepairPrice}");
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine("No repairs found for this property.");
+        }
+    }
+    else
+    {
+        Console.WriteLine("Property details not found.");
+    }
+}
+else
+{
+
+    Console.WriteLine($"Error retrieving property: Status code {propertyResponse.Status}");
+}
 
 var repairDetails = new PropertyRepair
 {
@@ -242,19 +356,43 @@ var repairDetailsFifth = new PropertyRepair
 
 IPropertyRepairService propertyRepairService = new PropertyRepairService(db);
 
-//propertyRepairService.SearchPropertyRepair(repairDetails.ScheduledRepair);
-//var repairFirst = propertyRepairService.CreatePropertyRepair(repairDetails, propertyFirst.Id);
+//Creating Repair Details
+var repairFirst = propertyRepairService.CreatePropertyRepair(repairDetails, 1);
 
-//var repairSecond = propertyRepairService.CreatePropertyRepair(repairDetailsSecond, propertySecond.Id);
+var repairSecond = propertyRepairService.CreatePropertyRepair(repairDetailsSecond, 2);
 
-//var repairThird = propertyRepairService.CreatePropertyRepair(repairDetailsThird, propertyThird.Id);
+var repairThird = propertyRepairService.CreatePropertyRepair(repairDetailsThird, 3);
 
-//var repairFourth = propertyRepairService.CreatePropertyRepair(repairDetailsFourth, propertyFourth.Id);
+var repairFourth = propertyRepairService.CreatePropertyRepair(repairDetailsFourth, 4);
 
-//var repairFifth = propertyRepairService.CreatePropertyRepair(repairDetailsFifth, propertyFourth.Id);
+var repairFifth = propertyRepairService.CreatePropertyRepair(repairDetailsFifth, 5);
 
-//propertyRepairService.UpdatePropertyRepair(repairDetailsFourth, 4);
+//Searching a repair detail
+var repairs = propertyRepairService.SearchPropertyRepair(repairDetails.ScheduledRepair);
 
-//propertyRepairService.UpdatePropertyRepair(repairDetailsFifth, 5);
+   if (repairs.Count == 0)
+   {
+    Console.WriteLine("No repairs found for this date.");
+   }
+   Console.Write($"{repairs.Count} found in {repairDetails.ScheduledRepair}\n");
+   foreach (var repair in repairs)
+   {
+    Console.WriteLine($"Repair ID: {repair.Id}, Description: {repair.RepairDescription}, Date: {repair.ScheduledRepair}, Cost: {repair.RepairPrice}");
 
-//propertyRepairService.DeletePropertyRepair(3);
+   }
+
+//Updating a repair detail
+var updatedRepairDetails = new PropertyRepair
+{
+    RepairDescription = "Broken Frames",
+    RepairAddress = "New York 90",
+    ScheduledRepair = DateTime.Now,
+    RepairType = RepairType.Frames,
+    RepairPrice = 6500m,
+    RepairStatus = RepairStatus.Complete,
+};
+
+propertyRepairService.UpdatePropertyRepair(updatedRepairDetails, 4);
+
+//Deleting Repair Details if its status is Complete
+propertyRepairService.DeletePropertyRepair(4);
