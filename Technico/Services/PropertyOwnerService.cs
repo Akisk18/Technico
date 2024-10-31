@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Technico.Interfaces;
 using Technico.Models;
 using Technico.Repositories;
+using Technico.Responses;
 
 namespace Technico.Services;
 
@@ -20,30 +21,48 @@ public class PropertyOwnerService : IPropertyOwnerService
     }
 
     //Register an owner
-    public PropertyOwner Register(PropertyOwner propertyOwner)
+    public ResponseApi<PropertyOwner> Register(PropertyOwner propertyOwner)
     {
         var existingUser = db.PropertyOwners.FirstOrDefault(x => x.VAT == propertyOwner.VAT);
 
         if (!ValidateOwner(propertyOwner))
         {
             Console.WriteLine("Validation failed. Register canceled.");
+            return new ResponseApi<PropertyOwner>
+            {
+                Message = "Validation failed. Register canceled",
+                Status = 1
+            };
         }
         if (existingUser != null)
         {
             Console.WriteLine("User already exists.");
-            return existingUser;
+            return new ResponseApi<PropertyOwner>
+            {
+                Message = "User already exists.",
+                Status = 2
+            };
         }
         try
         {
             db.PropertyOwners.Add(propertyOwner);
             db.SaveChanges();
             Console.WriteLine("User registered succesfully!");
-            return propertyOwner;
+            return new ResponseApi<PropertyOwner>
+            {
+                Message = "User registered succesfully!",
+                Status = 0,
+                Value = propertyOwner
+            };
         }
         catch (Exception)
         {
             Console.WriteLine("An error occured");
-            return null;
+            return new ResponseApi<PropertyOwner>
+            {
+                Message = "An error occured.",
+                Status = -1
+            };
         }
           
         
@@ -123,19 +142,27 @@ public class PropertyOwnerService : IPropertyOwnerService
     }
 
     //Update Owner Details
-    public PropertyOwner? UpdatePropertyOwner(PropertyOwner propertyOwner , int id)
+    public ResponseApi<PropertyOwner> UpdatePropertyOwner(PropertyOwner propertyOwner , int id)
     {
         PropertyOwner? propertyOwnerdb = db.PropertyOwners.FirstOrDefault(p => p.Id == id);
 
         if (!ValidateOwner(propertyOwner))
         {
             Console.WriteLine("Validation failed. Update canceled.");
-            return null;
+            return new ResponseApi<PropertyOwner>
+            {
+                Message="Validation failed. Update canceled",
+                Status=1
+            };
         }
         if (propertyOwnerdb == null)
         {
             Console.WriteLine("No owner found. Owner Update failed.");
-            return null;
+            return new ResponseApi<PropertyOwner>
+            {
+                Message = "No owner found. Owner update failed",
+                Status = 1
+            };
         }
             propertyOwnerdb.Name = propertyOwner.Name;
             propertyOwnerdb.Surname = propertyOwner.Surname;
@@ -149,12 +176,21 @@ public class PropertyOwnerService : IPropertyOwnerService
             {
                 db.SaveChanges();
                 Console.WriteLine("Owner Details updated succesfully!");
-                return propertyOwnerdb;
+                return new ResponseApi<PropertyOwner>
+                {
+                    Message = "Owner Details updated succesfully",
+                    Status = 0,
+                    Value = propertyOwnerdb
+                };
             }
             catch (Exception)
             {
-                Console.WriteLine("An error occured saving in the database.");
-                return null;
+                Console.WriteLine("An error occured while saving in the database.");
+                return new ResponseApi<PropertyOwner>
+                {
+                    Message="An error occured while saving in the database.",
+                    Status=-1
+                };
             }
             
            

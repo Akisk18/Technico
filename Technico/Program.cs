@@ -12,7 +12,7 @@ var ownerFirst = new PropertyOwner
     Surname = "Tribbiani",
     Password = "123456789",
     Email = "joey@gmail.com",
-    Address = "New York 13",
+    Address = "New York 14",
     VAT = "1234567895",
     PhoneNumber = "4565545",
     UserType = UserType.Owner,
@@ -72,7 +72,7 @@ var ownerSixth = new PropertyOwner
     Surname = "Buffay",
     Password = "715254578",
     Email = "phoebe@gmail.com",
-    Address = "New York 118",
+    Address = "New York 119",
     VAT = "4274355831",
     PhoneNumber = "122457896",
     UserType = UserType.Owner,
@@ -82,7 +82,8 @@ var ownerSixth = new PropertyOwner
 PropertyDbContext db = new PropertyDbContext();
 IPropertyOwnerService ownerService = new PropertyOwnerService(db);
 
-//var userFirst = ownerService.Register(ownerFirst);
+//var userFirst = ownerService.Register(ownerSixth);
+//ownerService.UpdatePropertyOwner(ownerSixth,3);
 
 //var userSecond = ownerService.Register(ownerSecond);
 
@@ -96,14 +97,14 @@ IPropertyOwnerService ownerService = new PropertyOwnerService(db);
 
 
 
-//ownerService.DisplayDetails(6);
+ownerService.DisplayDetails(3);
 
 
 
 
 //ownerService.DeletePropertyOwner(1);
 
-//ownerService.UpdatePropertyOwner(owner,1);
+
 
 var property = new PropertyItem
 {

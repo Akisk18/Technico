@@ -1,13 +1,14 @@
 ﻿using Technico.Models;
+using Technico.Responses;
 
 namespace Technico.Interfaces
 {
     public interface IPropertyItemService
     {
-        public bool ValidateItem(PropertyItem propertyItem);
-        public PropertyItem? ViewPropertyItem(int id);
-        public PropertyItem CreatePropertyItem(PropertyItem propertyItem, List<int> ownerIds);
-        public PropertyItem? UpdatePropertyItem(PropertyItem propertyItem, int id);
+         bool ValidateItem(PropertyItem propertyItem);
+         void ViewPropertyItem(int id);
+         ResponseApi<PropertyItem> CreatePropertyItem(PropertyItem propertyItem, List<int> ownerIds);
+         ResponseApi<PropertyItem> UpdatePropertyItem(PropertyItem propertyItem, int id);
         public bool DeletePropertyItem(int id);
     }
 }

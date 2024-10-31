@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Technico.Interfaces;
 using Technico.Models;
 using Technico.Repositories;
+using Technico.Responses;
 
 namespace Technico.Services;
 
@@ -42,7 +43,7 @@ public class PropertyItemService : IPropertyItemService
     }
 
     //Displays all details of the property
-    public PropertyItem? ViewPropertyItem(int id)
+    public void ViewPropertyItem(int id)
     {
        var propertyItem = db.PropertyItems.Where(p => p.Id == id)
             .Include(p => p.Repairs)
@@ -52,7 +53,7 @@ public class PropertyItemService : IPropertyItemService
         if (propertyItem == null)
         {
             Console.WriteLine("Property not found.");
-            return null;
+            return;
         }
         if (propertyItem.Owners.Count > 1)
         {
@@ -67,23 +68,30 @@ public class PropertyItemService : IPropertyItemService
         {
             Console.WriteLine($"Repair ID: {repairs.Id}, Description: {repairs.RepairDescription}, Date: {repairs.ScheduledRepair}, Cost: {repairs.RepairPrice}");
         }
-        return propertyItem;
     }
     //Creates a new propertyItem
-    public PropertyItem CreatePropertyItem(PropertyItem propertyItem , List<int> ownerIds)
+    public ResponseApi<PropertyItem> CreatePropertyItem(PropertyItem propertyItem , List<int> ownerIds)
     {
         var owners = db.PropertyOwners.Where(p => ownerIds.Contains(p.Id)).ToList();
 
         if (!ValidateItem(propertyItem))
         {
             Console.WriteLine("Validation failed. Creation of Property canceled");
-            return null;
+            return new ResponseApi<PropertyItem>
+            {
+                Message = "Validation failed. Creation of Property canceled",
+                Status = 1
+            };
         }
 
         if (owners == null) 
         {
             Console.WriteLine("Owner not found. Property creation failed.");
-            return propertyItem;
+            return new ResponseApi<PropertyItem>
+            {
+                Message = "Owner not found. Property creation failed",
+                Status = 1
+            };
         }
         propertyItem.Owners = owners;
         propertyItem.PropertyOwnerIds = ownerIds;
@@ -92,17 +100,26 @@ public class PropertyItemService : IPropertyItemService
             db.PropertyItems.Add(propertyItem);
             db.SaveChanges();
             Console.Write("Property Created Succesfully!");
-            return propertyItem;
+            return new ResponseApi<PropertyItem>
+            {
+                Message = "Property Created Succesfully!",
+                Status = 0,
+                Value = propertyItem       
+            };
         }
         catch (Exception ex) 
         {
             Console.WriteLine(ex.Message);
-            return null;
+            return new ResponseApi<PropertyItem>
+            {
+                Message = "An error occured.",
+                Status = -1
+            };
         }
        
     }
     //Update a propertyItem
-    public PropertyItem? UpdatePropertyItem(PropertyItem propertyItem ,int id) 
+    public ResponseApi<PropertyItem> UpdatePropertyItem(PropertyItem propertyItem ,int id) 
     {
         PropertyItem? propertyItemdb = db.PropertyItems
             .Include(p => p.Owners)
@@ -111,12 +128,20 @@ public class PropertyItemService : IPropertyItemService
         if (!ValidateItem(propertyItem))
         {
             Console.WriteLine("Validation failed. Creation of Property canceled");
-            return null;
+            return new ResponseApi<PropertyItem>
+            {
+                Message = "Validation failed. Creation of Property canceled.",
+                Status = 1,
+            };
         }
         if (propertyItemdb == null)
         {
             Console.WriteLine("The Property could not be found. Update failed.");
-            return null;
+            return new ResponseApi<PropertyItem>
+            {
+                Message = "The property could not be found. Update failed.",
+                Status = 1,
+            };
         }
             propertyItemdb.PublicIdentificationNumber = propertyItem.PublicIdentificationNumber;
             propertyItemdb.PropertyAddress = propertyItem.PropertyAddress;
@@ -128,12 +153,21 @@ public class PropertyItemService : IPropertyItemService
             {
                 db.SaveChanges();
                 Console.WriteLine("Property Updated!");
-                return propertyItemdb;
+                return new ResponseApi<PropertyItem>
+                {
+                    Message = "Property Updated!",
+                    Status = 0,
+                    Value = propertyItemdb
+                };
         }
             catch (Exception) 
             {
                 Console.WriteLine("An error occured saving in the database.");
-                return null;
+                return new ResponseApi<PropertyItem>
+                {
+                    Message = "An error occured saving in the database.",
+                    Status = -1,
+                };
             }
             
      

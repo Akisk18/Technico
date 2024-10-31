@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Technico.Interfaces;
 using Technico.Models;
 using Technico.Repositories;
+using Technico.Responses;
 
 namespace Technico.Services;
 
@@ -54,7 +55,7 @@ public class PropertyRepairService : IPropertyRepairService
     }
 
     //Create repair details
-    public PropertyRepair CreatePropertyRepair(PropertyRepair propertyRepair , int itemId)
+    public ResponseApi<PropertyRepair> CreatePropertyRepair(PropertyRepair propertyRepair , int itemId)
     {
         var item = db.PropertyItems.FirstOrDefault(p => p.Id == itemId);
         propertyRepair.PropertyItemId = itemId;
@@ -62,13 +63,21 @@ public class PropertyRepairService : IPropertyRepairService
         if (!ValidateRepair(propertyRepair)) 
         {
             Console.WriteLine("Validation failed. Creation of Repair details failed.");
-            return null;
+             return new ResponseApi<PropertyRepair>
+            {
+                Message = "Validation failed. Creation of Repair details failed",
+                Status = 1
+            }; ;
         }
 
         if (item == null)
         {
             Console.WriteLine("Property not found. Creation of repair detail failed.");
-            return null;
+            return new ResponseApi<PropertyRepair>
+            {
+                Message = "Property not found. Creation of repair detail failed.",
+                Status = 1
+            };
         }
 
         try
@@ -76,30 +85,47 @@ public class PropertyRepairService : IPropertyRepairService
             db.PropertyRepairs.Add(propertyRepair);
             db.SaveChanges();
             Console.WriteLine("\nRepair Details added succesfully!");
-            return propertyRepair;
+            return new ResponseApi<PropertyRepair>
+            {
+                Message = "Repair Details added Succesfully!",
+                Status = 0,
+                Value = propertyRepair
+            };
         }
         catch (Exception) 
         {
             Console.WriteLine("An error occured saving in the database.");
-            return null;
+            return new ResponseApi<PropertyRepair>
+            {
+                Message = "An error occured saving in the database.",
+                Status = -1
+            };
         }
         
        
     }
     //Update the Repair Details
-    public PropertyRepair? UpdatePropertyRepair(PropertyRepair propertyRepair, int id)
+    public ResponseApi<PropertyRepair> UpdatePropertyRepair(PropertyRepair propertyRepair, int id)
     {
         PropertyRepair? propertyRepairdb = db.PropertyRepairs.FirstOrDefault(p => p.Id == id);
 
         if (!ValidateRepair(propertyRepair)) 
         {
             Console.WriteLine("Validation failed. Creation of Repair details failed.");
-            return null ;
+            return new ResponseApi<PropertyRepair>
+            {
+                Message = "Validation failed. Creation of Repair details failed.",
+                Status = 1,
+            };
         }
         if (propertyRepairdb == null)
         {
             Console.WriteLine("Repair details could not be found. Update failed.");
-            return null;
+            return new ResponseApi<PropertyRepair>
+            {
+                Message = "The Repair details could not be found. Update failed.",
+                Status = 1,
+            };
         }
             propertyRepairdb.ScheduledRepair = propertyRepair.ScheduledRepair;
             propertyRepairdb.RepairType = propertyRepair.RepairType;
@@ -107,18 +133,27 @@ public class PropertyRepairService : IPropertyRepairService
             propertyRepairdb.RepairAddress = propertyRepair.RepairAddress;
             propertyRepairdb.RepairStatus = propertyRepair.RepairStatus;
             propertyRepairdb.RepairPrice = propertyRepair.RepairPrice;
-            propertyRepairdb.Property = propertyRepairdb.Property;
+            propertyRepairdb.Property = propertyRepair.Property;
             try
             {
                 db.SaveChanges();
                 Console.WriteLine("Property Repair Details Updated succesfully!");
-                return propertyRepairdb;
-            }
+            return new ResponseApi<PropertyRepair>
+            {
+                Message = "Property Updated!",
+                Status = 0,
+                Value = propertyRepairdb
+            };
+        }
             catch (Exception) 
             {
                 Console.WriteLine("An error occured.");
-                return null;
-            }
+            return new ResponseApi<PropertyRepair>
+            {
+                Message = "An error occured saving in the database.",
+                Status = -1,
+            };
+        }
             
             
     }
